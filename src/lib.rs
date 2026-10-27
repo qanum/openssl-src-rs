@@ -633,6 +633,18 @@ impl Build {
 
             let mut build = self.cmd_make()?;
             build.arg("build_libs").current_dir(&inner_dir);
+            // Qanum: fix the engine and provider-module directories that
+            // libcrypto compiles in. By default they are inside this build's
+            // OUT_DIR, so the library would depend on, and show, the path it
+            // was built in. They go under the OpenSSL directory instead
+            // (`/usr/local/ssl` unless the builder sets another).
+            if let Some(dir) = self.openssl_dir.as_ref() {
+                let mut engines: OsString = "ENGINESDIR=".into();
+                engines.push(dir.join("lib/engines-3"));
+                let mut modules: OsString = "MODULESDIR=".into();
+                modules.push(dir.join("lib/ossl-modules"));
+                build.arg(engines).arg(modules);
+            }
             if !cfg!(windows) {
                 if let Some(s) = env::var_os("CARGO_MAKEFLAGS") {
                     build.env("MAKEFLAGS", s);

@@ -23,7 +23,12 @@ Differences from upstream tag `300.5.5+3.5.5`:
 - `verify-openssl.sh` checks the files against the official tarball and its
   published SHA-256. Run it after every update.
 
-The build logic in `src/` is upstream's, unchanged. Licences are upstream's:
+The build logic in `src/` is upstream's with one change: the engine and
+provider-module directories compiled into libcrypto (`ENGINESDIR`,
+`MODULESDIR`) are `<openssldir>/lib/engines-3` and
+`<openssldir>/lib/ossl-modules` (by default under `/usr/local/ssl`)
+instead of paths inside the build's `OUT_DIR`, so the library does not
+depend on, or show, the directory it was built in. Licences are upstream's:
 the crate is MIT or Apache-2.0, OpenSSL is Apache-2.0 (`openssl/LICENSE.txt`).
 
 ## Updating to a new 3.5.x release
